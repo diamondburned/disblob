@@ -1,3 +1,4 @@
 [submodule "blobmoji"]
 	path = blobmoji
-	url = https://github.com/C1710/blobmoji.git
+	url = https://github.com/C1710/blobmoji
+	branch = master
