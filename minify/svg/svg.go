@@ -2,8 +2,6 @@ package svg
 
 import (
 	"bytes"
-	"encoding/xml"
-	"io"
 	"net/url"
 	"regexp"
 
@@ -33,19 +31,21 @@ func Inline(svg []byte) ([]byte, error) {
 		return nil, errors.Wrap(err, "Failed to minify")
 	}
 
-	// Allocate a stage 2 buffer to write the prefix as well as minify the SVG
-	// tag's attribute.
-	stage2 := bytes.Buffer{}
-	stage2.Grow(stage1.Len())
+	// This breaks some SVGs, so we're not doing it.
 
-	if err := minifyOpeningTag(&stage2, &stage1); err != nil {
-		return nil, errors.Wrap(err, "Failed to minify the SVG attribute tag")
-	}
+	// // Allocate a stage 2 buffer to write the prefix as well as minify the SVG
+	// // tag's attribute.
+	// stage2 := bytes.Buffer{}
+	// stage2.Grow(stage1.Len())
+
+	// if err := minifyOpeningTag(&stage2, &stage1); err != nil {
+	// 	return nil, errors.Wrap(err, "Failed to minify the SVG attribute tag")
+	// }
 
 	// Finally, URL escape everything.
 	stage3 := bytes.Buffer{}
 	stage3.WriteString(inlinePrefix)
-	stage3.Write(escape(stage2.Bytes()))
+	stage3.Write(escape(stage1.Bytes()))
 
 	return stage3.Bytes(), nil
 }
@@ -59,28 +59,4 @@ func escape(src []byte) []byte {
 	return symbolRegex.ReplaceAllFunc(src, func(b []byte) []byte {
 		return []byte(url.PathEscape(string(b)))
 	})
-}
-
-type svgFile struct {
-	XMLName xml.Name `xml:"svg"`
-	Style   string   `xml:"style,attr,omitempty"`
-	XMLNS   string   `xml:"xmlns,attr"` // required for SVGs
-
-	// Width, Height and ViewBox are actually important.
-	Width   string `xml:"width,attr,omitempty"`
-	Height  string `xml:"height,attr,omitempty"`
-	ViewBox string `xml:"viewBox,attr,omitempty"`
-
-	// ViewBox is not important.
-
-	Body []byte `xml:",innerxml"`
-}
-
-func minifyOpeningTag(w io.Writer, r io.Reader) error {
-	var svg svgFile
-	if err := xml.NewDecoder(r).Decode(&svg); err != nil {
-		return err
-	}
-
-	return xml.NewEncoder(w).Encode(svg)
 }

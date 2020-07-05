@@ -12,7 +12,9 @@ import (
 	"github.com/diamondburned/disblob/process"
 )
 
-const f_CSS = `img[aria-label^=":%s:"]{content:url('%s');}
+const f_CSS = `:root{--%[1]s:url('%[2]s')}
+img[alt=":%[1]s:"]{content:var(--%[1]s)}
+li[aria-label^=":%[1]s:"]>div{background-image:var(--%[1]s)!important;background-position:0!important;background-size:contain!important}
 `
 
 func main() {
