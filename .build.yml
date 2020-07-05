@@ -5,26 +5,24 @@ sources:
 image: alpine/edge
 packages:
     - go
-    - coreutils # used for split and tee
-environment:
-    GOMAXPROCS: 4 # 8 files at once
+    - coreutils # used for split
 artifacts:
     - disblob/style.css
     - disblob/discord_imports.css
 tasks:
     - test: |
         cd disblob
-        go test -v
+        go test -v ./...
     - main: |
         # go to the repository
         cd disblob
         # build the CSS
-        go run . >> ./style.css
+        go run . > style.css
 
         # split the CSS files
         split -C 5m --numeric-suffixes --additional-suffix '.css' style.css style_part
 
         # publish the split CSS files into discord_imports.css
         go run ./cmd/webhooker ~/.webhook style_part*.css | while read u; do
-            printf '@import url("%s");\n' "$u" | tee -a discord_imports.css
+            printf '@import url("%s");\n' "$u" >> discord_imports.css
         done

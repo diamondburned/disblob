@@ -1,91 +1,55 @@
 package process
 
 import (
-	"log"
-	"runtime"
+	"context"
 	"sync"
+	"sync/atomic"
 
-	"github.com/pkg/errors"
-	"go.etcd.io/bbolt"
 	"golang.org/x/sync/semaphore"
 )
 
-var bucket = []byte("a")
-var emptybytes = []byte{}
+const ParallelLimit = 1024
 
-// Processor provides an abstraction on a key-value persistent database, which
+// Parallel provides an abstraction on a key-value persistent database, which
 // prevents functions from being executed twice, ever.
-type Processor struct {
-	db *bbolt.DB
+type Parallel struct {
 	sm *semaphore.Weighted
 	wg sync.WaitGroup
+	er atomic.Value
 }
 
-func NewProcessor(dbpath string) (*Processor, error) {
-	d, err := bbolt.Open(dbpath, 0766, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to open database")
-	}
-
-	err = d.Update(func(tx *bbolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists(bucket)
-		return err
-	})
-
-	if err != nil {
-		return nil, errors.Wrap(err, "Failed to create bucket")
-	}
-
-	var sema = semaphore.NewWeighted(int64(runtime.GOMAXPROCS(-1) * 2))
-	return &Processor{db: d, sm: sema}, nil
+func NewParallel() *Parallel {
+	var sema = semaphore.NewWeighted(ParallelLimit)
+	return &Parallel{sm: sema}
 }
 
 // DoAsync runs the function asynchronously. The given callback will be passed
 // the given key string. This prevents common bugs with range. If the callback
 // returns false, then it is not recorded.
-func (p *Processor) DoAsync(key string, fn func(key string) bool) {
+func (p *Parallel) DoAsync(key, value string, fn func(k, v string) error) {
+	// Skip if there's an error.
+	if p.er.Load() != nil {
+		return
+	}
+
 	p.wg.Add(1)
+	p.sm.Acquire(context.Background(), 1)
 	go func() {
-		p.do(key, fn)
+		if err := fn(key, value); err != nil {
+			p.er.Store(err)
+		}
+		p.sm.Release(1)
 		p.wg.Done()
 	}()
 }
 
-func (p *Processor) do(key string, fn func(key string) bool) {
-	var kb = []byte(key)
-
-	// Noop if operation is already done.
-	var done bool
-	// We can use a view transaction here as those can be ran concurrently.
-	logIfErr(p.db.View(func(tx *bbolt.Tx) error {
-		done = tx.Bucket(bucket).Get(kb) != nil
-		return nil
-	}), "Failed to batch read")
-
-	if done {
-		return
-	}
-
-	// Run the function. Do not record it if false is returned.
-	if !fn(key) {
-		return
-	}
-
-	// Record that it's done. We should use a batch transaction here.
-	logIfErr(p.db.Batch(func(tx *bbolt.Tx) error {
-		return tx.Bucket(bucket).Put(kb, emptybytes)
-	}), "Failed to put records")
-}
-
-func (p *Processor) Finalize() error {
+func (p *Parallel) Wait() {
 	p.wg.Wait()
-	return p.db.Close()
 }
 
-var Logger = log.Println
-
-func logIfErr(err error, ctx string) {
-	if err != nil {
-		Logger(ctx+":", err)
+func (p *Parallel) Err() error {
+	if err, ok := p.er.Load().(error); ok {
+		return err
 	}
+	return nil
 }

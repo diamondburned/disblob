@@ -6,8 +6,5 @@ A stylesheet generator for use with Discord.
 
 ```sh
 # This will generate the stylesheet.
-go run . >> style.css
+go run . -defpath definitions.css -datpath data.css
 ```
-
-This generator will skip emojis that are already generated. To reset this,
-remove `state.db` and use `>` instead of `>>`.

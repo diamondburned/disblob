@@ -7,67 +7,82 @@ import (
 	"strings"
 
 	"github.com/Bios-Marcel/discordemojimap"
-	"github.com/diamondburned/disblob/minify/png"
-	"github.com/diamondburned/disblob/minify/svg"
+	"github.com/diamondburned/disblob/inline/png"
+	"github.com/diamondburned/disblob/inline/svg"
 	"github.com/diamondburned/disblob/process"
+	"github.com/pkg/errors"
 )
 
-const f_CSS = `:root{--%[1]s:url('%[2]s')}
-img[alt=":%[1]s:"]{content:var(--%[1]s)}
-li[aria-label^=":%[1]s:"]>div{background-image:var(--%[1]s)!important;background-position:0!important;background-size:contain!important}
-`
+const f_CSS = `img[alt=":%[1]s:"],li[aria-label^=":%[1]s:"]>div{` +
+	`content:var(--%[1]s);` +
+	`background-image:var(--%[1]s)!important;` +
+	`background-position:0!important;` +
+	`background-size:contain!important;` +
+	`--%[1]s:url('%[2]s')` +
+	"}\n"
 
 func main() {
-	p, err := process.NewProcessor("./state.db")
-	if err != nil {
-		log.Fatalln("Failed to make a new state")
-	}
+	// Make a new processor and use it for root variables.
+	var para = process.NewParallel()
 
-	for name := range discordemojimap.EmojiMap {
-		p.DoAsync(name, func(name string) bool {
-			var emoji = discordemojimap.EmojiMap[name]
+	for name, emoji := range discordemojimap.EmojiMap {
+		para.DoAsync(name, emoji, func(name, emoji string) error {
 			p, err := BlobExists(emoji)
 			if err != nil {
 				if err != ErrNotFound {
-					log.Fatalln("Failed to cache emojis:", err)
+					return errors.Wrap(err, "Failed to check exist")
 				}
 				logfail("Skipping non-existent", name, p, nil)
-				return false
+				return nil
 			}
 
-			f, err := ioutil.ReadFile(p)
+			// Read the emoji data. Read errors can be fatal.
+			d, err := ioutil.ReadFile(p)
 			if err != nil {
-				logfail("Failed to open", name, p, err)
-				return false
+				return errfail("Failed to open", name, p, err)
 			}
 
+			// Try and inline it.
 			var bytes []byte
-			if strings.HasSuffix(p, ".svg") {
-				bytes, err = svg.Inline(f)
-			} else {
-				bytes, err = png.Inline(f)
+			switch {
+			case strings.HasSuffix(p, ".svg"):
+				bytes, err = svg.Inline(d)
+			case strings.HasSuffix(p, ".png"):
+				bytes, err = png.Inline(d)
+			default:
+				// Skip unknown formats.
+				logfail("Unknown format of", name, p, nil)
+				return nil
 			}
 
 			if err != nil {
 				logfail("Failed to inline", name, p, err)
-				return false
+				return nil
 			}
 
 			fmt.Printf(f_CSS, name, string(bytes))
-			return true
+			return nil
 		})
 	}
 
-	if err := p.Finalize(); err != nil {
-		log.Fatalln("Failed to finalize:", err)
+	// Wait for all root variables to finish writing.
+	para.Wait()
+
+	// Error check.
+	if err := para.Err(); err != nil {
+		log.Fatalln("Failed to write emoji data:", err)
 	}
 }
 
 func logfail(desc, name, path string, err error) {
+	log.Println(errfail(desc, name, path, err))
+}
+
+func errfail(desc, name, path string, err error) error {
 	var errstring string
 	if err != nil {
 		errstring = ": " + err.Error()
 	}
 
-	log.Printf("%s emoji %s (path: %s)%s", desc, name, path, errstring)
+	return fmt.Errorf("%s emoji %s (path: %s)%s", desc, name, path, errstring)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/tdewolff/minify/svg"
 )
 
-const inlinePrefix = "data:image/svg+xml,"
+const inlinePrefix = "data:image/svg+xml;utf8,"
 
 var minifier *minify.M
 
@@ -51,7 +51,7 @@ func Inline(svg []byte) ([]byte, error) {
 }
 
 var (
-	symbolRegex = regexp.MustCompile(`(?m)[\r\n%#()<>?\[\\\]^\x60{|}']`)
+	symbolRegex = regexp.MustCompile(`(?m)[\r\n#?\[\\\]^\x60{|}']`)
 )
 
 func escape(src []byte) []byte {

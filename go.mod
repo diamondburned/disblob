@@ -6,6 +6,7 @@ replace github.com/Bios-Marcel/discordemojimap => github.com/diamondburned/disco
 
 require (
 	github.com/Bios-Marcel/discordemojimap v1.0.1
+	github.com/c2h5oh/datasize v0.0.0-20200112174442-28bbd4740fee // indirect
 	github.com/diamondburned/arikawa v0.9.6
 	github.com/disintegration/imaging v1.6.2
 	github.com/pkg/errors v0.9.1
