@@ -5,7 +5,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"unicode"
+
+	"github.com/pkg/errors"
 )
 
 func JoinUnicodeStringify(ustr, sep string) string {
@@ -30,7 +33,8 @@ func JoinUnicodeStringify(ustr, sep string) string {
 		}
 	}
 
-	return builder.String()
+	// Trim trailing separators.
+	return strings.TrimRight(builder.String(), sep)
 }
 
 var BlobmojiPath = filepath.Join(".", "blobmoji")
@@ -45,25 +49,71 @@ var tryformats = []struct{ path, format string }{
 	{filepath.Join("png", "128"), ".png"},
 }
 
+// knownFiles maps an emoji prefix to the file.
+var knownFiles = map[string]string{}
+var knownNames = []string{}
+var knownOnce = sync.Once{}
+
+func ensureKnownFiles() (toperr error) {
+	knownOnce.Do(func() {
+		for _, formats := range tryformats {
+			d, err := os.Open(filepath.Join(BlobmojiPath, formats.path))
+			if err != nil {
+				toperr = errors.Wrap(err, "Failed to open formats dir")
+				return
+			}
+
+			f, err := d.Readdir(-1)
+			if err != nil {
+				toperr = errors.Wrap(err, "Failed to read dir")
+				return
+			}
+
+			for _, file := range f {
+				// Strip the format.
+				name := strings.Split(file.Name(), ".")[0]
+
+				// Skip if we already have this emoji.
+				if _, ok := knownFiles[name]; ok {
+					continue
+				}
+
+				// Assign to map and slice.
+				knownFiles[name] = filepath.Join(formats.path, file.Name())
+				knownNames = append(knownNames, name)
+			}
+		}
+	})
+	return
+}
+
 type Blob struct {
 	Path string // path to the blog
 	SVG  bool
 }
 
+var stopWalk = errors.New("stop walk")
+var ErrNotFound = errors.New("emoji not found")
+
 // BlobExists returns the filename and true if the given emoji exists in
-// Blobmoji. It returns an empty string and false otherwise.
-func BlobExists(emoji string) (Blob, bool) {
+// Blobmoji. It returns the attempted filename in Path and false otherwise.
+func BlobExists(emoji string) (string, error) {
+	if err := ensureKnownFiles(); err != nil {
+		return "", err
+	}
+
 	var prefix = blobPrefixName(emoji)
-	var name string
 
-	for _, format := range tryformats {
-		name = prefix + format.format
-		path := filepath.Join(BlobmojiPath, format.path, name)
+	if path, ok := knownFiles[prefix]; ok {
+		return path, nil
+	}
 
-		if _, err := os.Stat(path); err == nil {
-			return Blob{path, format.format == ".svg"}, true
+	// Try the slow path. Search the prefix and grab the first match.
+	for _, name := range knownNames {
+		if strings.HasPrefix(name, prefix) {
+			return knownFiles[name], nil
 		}
 	}
 
-	return Blob{}, false
+	return prefix, ErrNotFound
 }

@@ -2,6 +2,8 @@ module github.com/diamondburned/disblob
 
 go 1.14
 
+replace github.com/Bios-Marcel/discordemojimap => github.com/diamondburned/discordemojimap v1.0.2-0.20200705072340-794f292a5a71
+
 require (
 	github.com/Bios-Marcel/discordemojimap v1.0.1
 	github.com/diamondburned/arikawa v0.9.6

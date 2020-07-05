@@ -18,8 +18,5 @@ tasks:
         mv ../blobmoji ./blobmoji
         # build the CSS
         go run . >> ./style.css
-        # git describe command returns 0 if release, so we can upload the URL
-        if git describe --exact-match --tags HEAD &> /dev/null; then
-            echo "Release build, uploading style.css..."
-            WEBHOOK_TOKEN=$(< ~/.webhook_token) go run ./cmd/webhooker ./style.css
-        fi
+        # publish the style.css file
+        WEBHOOK_TOKEN=$(< ~/.webhook_token) go run ./cmd/webhooker ./style.css

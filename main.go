@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 
 	"github.com/Bios-Marcel/discordemojimap"
 	"github.com/diamondburned/disblob/minify/png"
@@ -23,31 +24,34 @@ func main() {
 	for name := range discordemojimap.EmojiMap {
 		p.DoAsync(name, func(name string) bool {
 			var emoji = discordemojimap.EmojiMap[name]
-			bl, ok := BlobExists(emoji)
-			if !ok {
-				logfail("Skipping non-existent", name, bl.Path, nil)
-				return false
-			}
-
-			f, err := ioutil.ReadFile(bl.Path)
+			p, err := BlobExists(emoji)
 			if err != nil {
-				logfail("Failed to open", name, bl.Path, err)
+				if err != ErrNotFound {
+					log.Fatalln("Failed to cache emojis:", err)
+				}
+				logfail("Skipping non-existent", name, p, nil)
 				return false
 			}
 
-			var b []byte
-			if bl.SVG {
-				b, err = svg.Inline(f)
+			f, err := ioutil.ReadFile(p)
+			if err != nil {
+				logfail("Failed to open", name, p, err)
+				return false
+			}
+
+			var bytes []byte
+			if strings.HasSuffix(p, ".svg") {
+				bytes, err = svg.Inline(f)
 			} else {
-				b, err = png.Inline(f)
+				bytes, err = png.Inline(f)
 			}
 
 			if err != nil {
-				logfail("Failed to inline", name, bl.Path, err)
+				logfail("Failed to inline", name, p, err)
 				return false
 			}
 
-			fmt.Printf(f_CSS, name, string(b))
+			fmt.Printf(f_CSS, name, string(bytes))
 			return true
 		})
 	}

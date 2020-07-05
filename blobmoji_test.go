@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/Bios-Marcel/discordemojimap"
@@ -21,13 +20,9 @@ func TestBlobPrefixName(t *testing.T) {
 
 func TestDiscordEmojisExist(t *testing.T) {
 	for name, emoji := range discordemojimap.EmojiMap {
-		if svg, ok := BlobExists(emoji); !ok {
-			// Exclude flags.
-			if strings.Contains(name, "flag_") {
-				t.Logf("Skipped emoji name %q does not exist, as it is a flag.", name)
-			} else {
-				t.Errorf("Emoji %q does not exist at %q.", name, svg)
-			}
+		p, err := BlobExists(emoji)
+		if err != nil {
+			t.Logf("Emoji %q does not exist at %q, error %v.", name, p, err)
 		}
 	}
 }
