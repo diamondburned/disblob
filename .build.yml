@@ -8,6 +8,8 @@ packages:
     - go
 environment:
     WEBHOOK_ID: 729185757352165407
+artifacts:
+    - disblob/style.css
 tasks:
     - main: |
         # go to the repository
