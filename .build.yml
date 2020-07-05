@@ -19,4 +19,4 @@ tasks:
         # build the CSS
         go run . >> ./style.css
         # publish the style.css file
-        go run ./cmd/webhooker ~/.webhook_token ./style.css
+        go run ./cmd/webhooker ~/.webhook ./style.css
