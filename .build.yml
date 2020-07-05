@@ -6,7 +6,7 @@ image: alpine/edge
 packages:
     - go
 environment:
-    WEBHOOK_ID: 729250163113197572
+    GOMAXPROCS: 4 # 8 files at once
 artifacts:
     - disblob/style.css
 tasks:

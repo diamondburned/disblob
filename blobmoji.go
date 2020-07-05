@@ -71,6 +71,9 @@ func ensureKnownFiles() (toperr error) {
 				return
 			}
 
+			// Close the directory; we don't need to check error here.
+			d.Close()
+
 			for _, file := range f {
 				// Strip the format.
 				name := strings.Split(file.Name(), ".")[0]
