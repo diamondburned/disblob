@@ -1,12 +1,12 @@
 secrets:
-    - 51e2201d-4297-47c0-a61d-3fc61de728a2
+    - 1b222136-5875-4aac-ba84-b62ba1ab52c3
 sources:
     - https://github.com/diamondburned/disblob
 image: alpine/edge
 packages:
     - go
 environment:
-    WEBHOOK_ID: 729185757352165407
+    WEBHOOK_ID: 729250163113197572
 artifacts:
     - disblob/style.css
 tasks:
@@ -19,4 +19,4 @@ tasks:
         # build the CSS
         go run . >> ./style.css
         # publish the style.css file
-        WEBHOOK_TOKEN=$(< ~/.webhook_token) go run ./cmd/webhooker ./style.css
+        go run ./cmd/webhooker ~/.webhook_token ./style.css

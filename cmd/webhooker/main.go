@@ -1,33 +1,42 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/diamondburned/arikawa/api"
 	"github.com/diamondburned/arikawa/discord"
 )
 
+var webhookURL = regexp.MustCompile(`https://discord.com/api/webhooks/(\d+)/(\S+)`)
+
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatalln("Missing files. Usage:", filepath.Base(os.Args[0]), "<files...>")
+	if len(os.Args) < 3 {
+		log.Fatalln("Usage:", filepath.Base(os.Args[0]), "<webhook URL file> <files...>")
 	}
 
-	var token = os.Getenv("WEBHOOK_TOKEN")
-	var strid = os.Getenv("WEBHOOK_ID")
+	u, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+		log.Fatalln("Failed to read webhook URL file:", err)
+	}
+
+	matches := webhookURL.FindStringSubmatch(string(u))
+	if len(matches) != 3 {
+		log.Fatalln("Invalid URL format.")
+	}
 
 	// Parse string ID.
-	w, err := discord.ParseSnowflake(strid)
+	w, err := discord.ParseSnowflake(matches[1])
 	if err != nil {
 		log.Fatalln("Invalid snowflake in $WEBHOOK_ID:", err)
 	}
+	// Get the token.
+	t := matches[2]
 
-	if token == "" {
-		log.Fatalln("$WEBHOOK_TOKEN is empty.")
-	}
-
-	var names = os.Args[1:]
+	var names = os.Args[2:]
 	var files = make([]api.SendMessageFile, len(names))
 
 	for i, name := range names {
@@ -48,7 +57,7 @@ func main() {
 
 	c := api.NewClient("")
 
-	m, err := c.ExecuteWebhook(w, token, true, api.ExecuteWebhookData{Files: files})
+	m, err := c.ExecuteWebhook(w, t, true, api.ExecuteWebhookData{Files: files})
 	if err != nil {
 		log.Fatalln("Failed to send webhook:", err)
 	}
