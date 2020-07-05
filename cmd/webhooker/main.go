@@ -36,6 +36,8 @@ func main() {
 			log.Fatalln("Failed to open file:", err)
 		}
 
+		// Close the file at the END of the MAIN FUNCTION. This defer is
+		// intentional!
 		defer f.Close()
 
 		files[i] = api.SendMessageFile{
