@@ -36,10 +36,10 @@ func main() {
 	// Get the token.
 	t := matches[2]
 
+	var client = api.NewClient("")
 	var names = os.Args[2:]
-	var files = make([]api.SendMessageFile, len(names))
 
-	for i, name := range names {
+	for _, name := range names {
 		f, err := os.Open(name)
 		if err != nil {
 			log.Fatalln("Failed to open file:", err)
@@ -49,22 +49,22 @@ func main() {
 		// intentional!
 		defer f.Close()
 
-		files[i] = api.SendMessageFile{
-			Name:   filepath.Base(name),
-			Reader: f,
+		m, err := client.ExecuteWebhook(w, t, true, api.ExecuteWebhookData{
+			Files: []api.SendMessageFile{{Name: filepath.Base(name), Reader: f}},
+		})
+		if err != nil {
+			log.Fatalln("Failed to send webhook:", err)
 		}
+
+		if len(m.Attachments) == 0 {
+			log.Fatalln("No attachments found in message.")
+		}
+
+		os.Stdout.WriteString(m.Attachments[0].URL)
+		os.Stdout.WriteString("\n")
+
+		// Close file; no need to chech for errors here.
+		f.Close()
 	}
 
-	c := api.NewClient("")
-
-	m, err := c.ExecuteWebhook(w, t, true, api.ExecuteWebhookData{Files: files})
-	if err != nil {
-		log.Fatalln("Failed to send webhook:", err)
-	}
-
-	if len(m.Attachments) == 0 {
-		log.Fatalln("No attachments found in message.")
-	}
-
-	os.Stdout.WriteString(m.Attachments[0].URL)
 }
