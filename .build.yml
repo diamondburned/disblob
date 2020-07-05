@@ -26,5 +26,5 @@ tasks:
 
         # publish the split CSS files into discord_imports.css
         go run ./cmd/webhooker ~/.webhook style_part*.css | while read u; do
-            printf '@import url("%s")\n' "$u" | tee discord_imports.css
+            printf '@import url("%s");\n' "$u" | tee -a discord_imports.css
         done
