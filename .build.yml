@@ -10,6 +10,9 @@ environment:
 artifacts:
     - disblob/style.css
 tasks:
+    - test: |
+        cd disblob
+        go test -v
     - main: |
         # go to the repository
         cd disblob

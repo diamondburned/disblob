@@ -57,7 +57,9 @@ var knownOnce = sync.Once{}
 func ensureKnownFiles() (toperr error) {
 	knownOnce.Do(func() {
 		for _, formats := range tryformats {
-			d, err := os.Open(filepath.Join(BlobmojiPath, formats.path))
+			var dirname = filepath.Join(BlobmojiPath, formats.path)
+
+			d, err := os.Open(dirname)
 			if err != nil {
 				toperr = errors.Wrap(err, "Failed to open formats dir")
 				return
@@ -79,7 +81,7 @@ func ensureKnownFiles() (toperr error) {
 				}
 
 				// Assign to map and slice.
-				knownFiles[name] = filepath.Join(formats.path, file.Name())
+				knownFiles[name] = filepath.Join(dirname, file.Name())
 				knownNames = append(knownNames, name)
 			}
 		}
