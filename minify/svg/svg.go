@@ -66,9 +66,10 @@ type svgFile struct {
 	Style   string   `xml:"style,attr,omitempty"`
 	XMLNS   string   `xml:"xmlns,attr"` // required for SVGs
 
-	// Width and Height are actually important.
-	Width  string `xml:"width,attr,omitempty"`
-	Height string `xml:"height,attr,omitempty"`
+	// Width, Height and ViewBox are actually important.
+	Width   string `xml:"width,attr,omitempty"`
+	Height  string `xml:"height,attr,omitempty"`
+	ViewBox string `xml:"viewBox,attr,omitempty"`
 
 	// ViewBox is not important.
 
