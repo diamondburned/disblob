@@ -2,3 +2,4 @@
 	path = blobmoji
 	url = https://github.com/C1710/blobmoji
 	branch = master
+	shallow = true

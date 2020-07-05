@@ -2,7 +2,6 @@ secrets:
     - 51e2201d-4297-47c0-a61d-3fc61de728a2
 sources:
     - https://github.com/diamondburned/disblob
-    - https://github.com/C1710/blobmoji
 image: alpine/edge
 packages:
     - go
@@ -14,8 +13,6 @@ tasks:
     - main: |
         # go to the repository
         cd disblob
-        # install the emoji repository
-        mv ../blobmoji ./blobmoji
         # build the CSS
         go run . >> ./style.css
         # publish the style.css file
