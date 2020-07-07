@@ -18,6 +18,8 @@ const f_CSS = "" +
 	`li[aria-label^=":%[1]s:"]>div` +
 	"{" +
 
+	// Fix both versions of an emoji appearing on Firefox (gk).
+	"object-position:-99999px -99999px;" +
 	"content:var(--%[1]s);" +
 	"background-image:var(--%[1]s)!important;" +
 	"background-position:0!important;" +
@@ -27,10 +29,6 @@ const f_CSS = "" +
 	"}\n"
 
 func main() {
-	// Write the one-liner that fixes Firefox CSS.
-	fmt.Println("/* Fix both versions of an emoji appearing on Firefox (gk). */")
-	fmt.Println("img.emoji { object-position: -99999px -99999px }")
-
 	// Make a new processor and use it for root variables.
 	var para = process.NewParallel()
 
