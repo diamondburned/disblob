@@ -51,7 +51,7 @@ func Inline(svg []byte) ([]byte, error) {
 }
 
 var (
-	symbolRegex = regexp.MustCompile(`(?m)[\r\n#?\[\\\]^\x60{|}']`)
+	symbolRegex = regexp.MustCompile(`(?m)[,/?:@&=+$#]`)
 )
 
 func escape(src []byte) []byte {

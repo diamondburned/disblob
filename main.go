@@ -13,15 +13,24 @@ import (
 	"github.com/pkg/errors"
 )
 
-const f_CSS = `img[alt=":%[1]s:"],li[aria-label^=":%[1]s:"]>div{` +
-	`content:var(--%[1]s);` +
-	`background-image:var(--%[1]s)!important;` +
-	`background-position:0!important;` +
-	`background-size:contain!important;` +
-	`--%[1]s:url('%[2]s')` +
+const f_CSS = "" +
+	`img[alt=":%[1]s:"],` +
+	`li[aria-label^=":%[1]s:"]>div` +
+	"{" +
+
+	"content:var(--%[1]s);" +
+	"background-image:var(--%[1]s)!important;" +
+	"background-position:0!important;" +
+	"background-size:contain!important;" +
+	"--%[1]s:url('%[2]s')" +
+
 	"}\n"
 
 func main() {
+	// Write the one-liner that fixes Firefox CSS.
+	fmt.Println("/* Fix both versions of an emoji appearing on Firefox (gk). */")
+	fmt.Println("img.emoji { object-position: -99999px -99999px }")
+
 	// Make a new processor and use it for root variables.
 	var para = process.NewParallel()
 
