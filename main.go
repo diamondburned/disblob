@@ -14,12 +14,13 @@ import (
 )
 
 const f_CSS = "" +
-	`img[alt=":%[1]s:"],` +
+	`img[alt=":%[1]s:"],` + // used for emoji names
+	`img[alt="%[2]s"],` + // used for unicodes
 	`li[aria-label^=":%[1]s:"]>div` + "{" +
 
 	"content:var(--a);" +
 	"background-image:var(--a)!important;" +
-	`--a:url("%[2]s")` +
+	`--a:url("%[3]s")` +
 
 	"}\n"
 
@@ -71,7 +72,7 @@ func main() {
 				return nil
 			}
 
-			fmt.Printf(f_CSS, name, string(bytes))
+			fmt.Printf(f_CSS, name, emoji, string(bytes))
 			return nil
 		})
 	}
