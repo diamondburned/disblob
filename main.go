@@ -15,20 +15,24 @@ import (
 
 const f_CSS = "" +
 	`img[alt=":%[1]s:"],` +
-	`li[aria-label^=":%[1]s:"]>div` +
-	"{" +
+	`li[aria-label^=":%[1]s:"]>div` + "{" +
 
-	// Fix both versions of an emoji appearing on Firefox (gk).
-	"object-position:-99999px -99999px;" +
-	"content:var(--%[1]s);" +
-	"background-image:var(--%[1]s)!important;" +
-	"background-position:0!important;" +
-	"background-size:contain!important;" +
-	"--%[1]s:url('%[2]s')" +
+	"content:var(--a);" +
+	"background-image:var(--a)!important;" +
+	`--a:url("%[2]s")` +
 
 	"}\n"
 
 func main() {
+	// Write the Firefox CSS fix where both versions of an emoji would appear
+	// (gk).
+	fmt.Println(`.emoji[src$=".svg"] { object-position: -9999px -9999px }`)
+
+	// Write the global list rule that fixes emoji scaling.
+	fmt.Println(`img[class^="emoji"], li[id^="emoji"] > div {
+		background-position: 0 !important; background-size: contain !important;
+	}`)
+
 	// Make a new processor and use it for root variables.
 	var para = process.NewParallel()
 
@@ -52,10 +56,10 @@ func main() {
 			// Try and inline it.
 			var bytes []byte
 			switch {
-			case strings.HasSuffix(p, ".svg"):
-				bytes, err = svg.Inline(d)
 			case strings.HasSuffix(p, ".png"):
 				bytes, err = png.Inline(d)
+			case strings.HasSuffix(p, ".svg"):
+				bytes, err = svg.Inline(d)
 			default:
 				// Skip unknown formats.
 				logfail("Unknown format of", name, p, nil)

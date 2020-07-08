@@ -10,9 +10,12 @@ import (
 )
 
 // Size to reduce to.
-const Size = 56
+const Size = 48
 
 const inlinePrefix = "data:image/png;base64,"
+
+// encoder with padding, REQUIRED
+var b64encoder = base64.StdEncoding.WithPadding(base64.StdPadding)
 
 func Inline(pngdata []byte) ([]byte, error) {
 	// Compress first.
@@ -21,14 +24,19 @@ func Inline(pngdata []byte) ([]byte, error) {
 		return nil, errors.Wrap(err, "Failed to compress PNG")
 	}
 
+	var b64len = base64.StdEncoding.EncodedLen(len(b))
+	var b64dat = make([]byte, len(inlinePrefix)+b64len)
+
+	// Write the header.
+	copy(b64dat, []byte(inlinePrefix))
+
 	// Base64 encode.
-	var b64dat = make([]byte, base64.URLEncoding.EncodedLen(len(b)))
-	base64.URLEncoding.Encode(b64dat, b)
+	b64encoder.Encode(b64dat[len(inlinePrefix):], b)
 
 	return b64dat, nil
 }
 
-var encoder = png.Encoder{
+var pngencoder = png.Encoder{
 	CompressionLevel: png.BestCompression,
 }
 
@@ -42,7 +50,7 @@ func compress(pngdata []byte) ([]byte, error) {
 
 	var buf bytes.Buffer
 
-	if err := encoder.Encode(&buf, i); err != nil {
+	if err := pngencoder.Encode(&buf, i); err != nil {
 		return nil, errors.Wrap(err, "Failed to re-encode PNG")
 	}
 

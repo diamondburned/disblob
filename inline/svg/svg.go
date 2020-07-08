@@ -11,7 +11,7 @@ import (
 	"github.com/tdewolff/minify/svg"
 )
 
-const inlinePrefix = "data:image/svg+xml;utf8,"
+const inlinePrefix = "data:image/svg+xml,"
 
 var minifier *minify.M
 
@@ -51,12 +51,19 @@ func Inline(svg []byte) ([]byte, error) {
 }
 
 var (
-	symbolRegex = regexp.MustCompile(`(?m)[,/?:@&=+$#]`)
+	// regex to escape symbols
+	symbolRegex = regexp.MustCompile(`(?m)[\r\n#?\[\\\]^\x60{|}'"]`)
+	// regex to strip invalid style attributes
+	invstyleRegex = regexp.MustCompile(`(?mU) style=".*'.*'.*"`)
+	// regex to fix ugly font
+	comicNeueRegex = regexp.MustCompile(`(?mUi)(['"])Comic Neue( \w+)?['"]`)
+
+	sansserif = []byte("${1}sans-serif${1}")
 )
 
 func escape(src []byte) []byte {
-	// replace all symbols
-	return symbolRegex.ReplaceAllFunc(src, func(b []byte) []byte {
-		return []byte(url.PathEscape(string(b)))
-	})
+	// replace all Comit Neues w/ normal Sans
+	src = comicNeueRegex.ReplaceAll(src, sansserif)
+
+	return []byte(url.PathEscape(string(src)))
 }

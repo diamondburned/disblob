@@ -43,10 +43,10 @@ func blobPrefixName(emoji string) string {
 	return "emoji_u" + JoinUnicodeStringify(emoji, "_")
 }
 
-// Try SVG first, then PNG.
+// Prioritize PNG over SVG.
 var tryformats = []struct{ path, format string }{
-	{"svg", ".svg"},
 	{filepath.Join("png", "128"), ".png"},
+	{"svg", ".svg"},
 }
 
 // knownFiles maps an emoji prefix to the file.
