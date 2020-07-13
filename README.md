@@ -7,7 +7,6 @@ A stylesheet(css) generator for use with Discord.
 ***This fork is an attempt to iron out some bugs, and refine the `README`***
 ***
 # Status
-![Go](https://github.com/ThatGeekyWeeb/disblob/workflows/Go/badge.svg?event=run)
 |   |Status |	|
 |--|--|--|
 |   |Edits: |	|
@@ -33,10 +32,10 @@ A stylesheet(css) generator for use with Discord.
 
 ***
 ## Dependencies
- 
- 1. `go`
-  2. `zopfli`
-  3. 1+ GiB of storage space
+  1. (All Blobmoji deps(https://github.com/C1710/blobmoji/blob/master/README.md#building-notocoloremoji))
+  2. `go`
+  3. `zopfli`
+  4. 1+ GiB of storage space
  
 ## Building
 
