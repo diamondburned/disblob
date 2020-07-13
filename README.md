@@ -7,15 +7,6 @@ A stylesheet(css) generator for use with Discord.
 ***This fork is an attempt to refine the `README` and make it easier for others to setup!***
 ***
 # Status
-|   |Status |	|
-|--|--|--|
-|   |Edits: |	|
-|  | `README` Only |  |
-
-|   |Fork|  |
-|--|--|--|
-|  | Fork Only |  |
-|  |  (PR [Open](https://github.com/diamondburned/disblob/pull/1))  |  |
 
 |  | Testing |  |
 |--|--|--|
@@ -24,8 +15,8 @@ A stylesheet(css) generator for use with Discord.
 ***
  - [x] Client (BD(BetterBiscord)~(100% Working!))
  - [ ] Client (Other css injectors)
- - [ ] Browsers (Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
  - [x] Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware)) 
+ - [x] Google Chrome
 ***
 ***
 |  | Contributors:|  |
@@ -34,37 +25,27 @@ A stylesheet(css) generator for use with Discord.
 
 ***
 ## Dependencies
-  1. (All Blobmoji deps(https://github.com/C1710/blobmoji/wiki/Build-instructions))
-  2. `go`
-  3. `zopfli`
-  4. 1+ GiB of storage space
- 
+  1. `go`
+  2. `zopfli`
+***
 ## Building
 
 ```sh
 git clone https://github.com/diamondburned/disblob.git
 cd disblob
 git submodule update --init
-cd blobmoji
-make -j$(nproc)
-cd ..
-mv blobmoji/build/renamed_flags/* blobmoji/svg/
-mv blobmoji/build/resized_flags/ blobmoji/
-
+```
+**Optinally, compile Blobmoji (Flags will not be mapped if you do not)**
+>(All Blobmoji [deps](https://github.com/C1710/blobmoji/wiki/Build-instructions) are required)
+> >```sh
+> >cd blobmoji
+> >make -j$(nproc)
+> >cd ..
+> >mv blobmoji/build/renamed_flags/* blobmoji/svg/
+> >mv blobmoji/build/resized_flags/ blobmoji/
+> >```
+***
+```sh
 # This will generate the stylesheet.
-go run . -defpath definitions.css -datpath data.css > <css file>
+go run . > ./output.css
 ```
-## Releases
-My github pages link can be used to `@import` the css
-```css
-@import url("https://thatgeekyweeb.github.io/src/import.data.css");
-```
-
-Additionally there are releases [here!](https://github.com/ThatGeekyWeeb/disblob/releases)
-
-
-# Contributing
-Any Pull Requests, Opened Issues, and forks are  Greatly welcomed!\
-You help make disblob better by Contributing!
-
-> Written with [StackEdit](https://stackedit.io/)
