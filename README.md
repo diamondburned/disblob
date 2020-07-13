@@ -14,8 +14,11 @@ A stylesheet(css) generator for use with Discord.
 |  |-  (Tests have been done with the client and Browsers)  |  
 ***
  - [x] Client (BD(BetterBiscord)~(100% Working!))
- - [x] Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware)) 
+ - [x] Firefox Browser 
  - [x] Google Chrome
+ > Use [stylus](https://github.com/openstyles/stylus) for injecting css Within browsers
+ > > DO NOT USE STYLISH IT IS [SPYWARE](https://robertheaton.com/2018/07/02/stylish-browser-extension-steals-your-internet-history/)
+ 
  > NOTE: use within browsers requires one use the `discord_imports.css` from [here](https://builds.sr.ht/~diamondburned/job/249530)(Latest build)
  > Or use this
  > ```css
