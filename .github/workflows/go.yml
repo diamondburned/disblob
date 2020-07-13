@@ -1,0 +1,57 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.13
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: run
+      run: |
+        sudo apt install zopfli zopfli-devel go --yes
+        git submodule update --init
+        cd blobmoji
+        make
+        cd ..
+        mv blobmoji/build/renamed_flags/* blobmoji/svg/
+        mv blobmoji/build/resized_flags/ blobmoji/
+        go run . -defpath definitions.css -datpath data.css > ./test.css
+        if [ "$?" != "0" ]; then
+          "status"="completed"
+          "conclusion"="failure"
+          exit 1
+        else
+          "status"="completed"
+          "conclusion": "success"
+        fi
+        if [ "status" != "completed" ]; then
+          echo "WARNING: SOMETHING WENT VERY VERY WRONG"
+          echo "WARNING: GOING FORTH NONE THE LESS"
+        fi
+        if [ "conclusion" != "success" ]; then
+          echo "Failed!"
+          exit 1
+        else
+          echo "Completed"
+        fi
+    - name: Test
+      run: go test
+
+# "NOTE: I have never used workflows before, so i have no idea how to do this" 
+# "Feel free to ~~Please~~ edit"
