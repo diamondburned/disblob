@@ -4,7 +4,7 @@ A stylesheet(css) generator for use with Discord.
 ***All original code is done by the insane but genius [diamondburned](https://github.com/diamondburned/)***
 > [Master repo](https://github.com/diamondburned/disblob)
 
-***This fork is an attempt to iron out some bugs, and refine the `README`***
+***This fork is an attempt to refine the `README` and make it easier for others to setup!***
 ***
 # Status
 |   |Status |	|
@@ -24,7 +24,8 @@ A stylesheet(css) generator for use with Discord.
 ***
  - [x] Client (BD(BetterBiscord))
  - [ ] Client (Other css injectors)
- - [ ] Browsers (FIrefox, Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
+ - [ ] Browsers (Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
+ - [x] Firefox Browserr (Testing done) 
 ***
 |  | Contributors:|  |
 |--|--|--|
@@ -50,12 +51,21 @@ mv blobmoji/build/resized_flags/ blobmoji/
 # This will generate the stylesheet.
 go run . -defpath definitions.css -datpath data.css > <css file>
 ```
+## Releases
+My github pages link can be used to `@import` the css
+```css
+@import url("https://thatgeekyweeb.github.io/src/import.data.css");
+```
+
+Additionally there are releases [here!](https://github.com/ThatGeekyWeeb/disblob/releases)
+
 
 # Contributing
 Any Pull Requests, Opened Issues, and forks are  Greatly welcomed!\
 You help make disblob better by Contributing!
 
 > Written with [StackEdit](https://stackedit.io/).
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk2NTIwMTUyOV19
+eyJoaXN0b3J5IjpbMTMzNjM1MTI5Nl19
 -->
