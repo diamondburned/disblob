@@ -10,11 +10,10 @@ A stylesheet(css) generator for use with Discord.
 
 |  | Testing |  |
 |--|--|--|
-|  | 		-Client + Firefox-		 |  |
-|  |-  (Tests have been done with the client and Firefox)  |  
+|  | 		All tested		 |  |
+|  |-  (Tests have been done with the client and Browsers)  |  
 ***
  - [x] Client (BD(BetterBiscord)~(100% Working!))
- - [ ] Client (Other css injectors)
  - [x] Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware)) 
  - [x] Google Chrome
 ***
