@@ -1,115 +1,47 @@
----
+# disblob
+A stylesheet(css) generator for use with Discord.
+***
+***All original code is done by the insane but genius [diamondburned](https://github.com/diamondburned/)***
+> [Master repo](https://github.com/diamondburned/disblob)
 
+***This fork is an attempt to refine the `README` and make it easier for others to setup!***
+***
+# Status
+|   |Status |	|
+|--|--|--|
+|   |Edits: |	|
+|  | `README` Only |  |
 
----
+|   |Fork|  |
+|--|--|--|
+|  | Fork Only |  |
+|  |  (No PR)  |  |
 
-<h1 id="disblob">disblob</h1>
-<p>A stylesheet(css) generator for use with Discord.</p>
-<hr>
-<p><em><strong>All original code is done by the insane but genius <a href="https://github.com/diamondburned/">diamondburned</a></strong></em></p>
-<blockquote>
-<p><a href="https://github.com/diamondburned/disblob">Master repo</a></p>
-</blockquote>
-<p><em><strong>This fork is an attempt to refine the <code>README</code> and make it easier for others to setup!</strong></em></p>
-<hr>
-<h1 id="status">Status</h1>
+|  | Testing |  |
+|--|--|--|
+|  | 		-Client Only-		 |  |
+|  |-  (No Tests have been done outside of the client)  |  
+***
+ - [x] Client (BD(BetterBiscord)~(100% Working!)
+ - [ ] Client (Other css injectors)
+ - [ ] Browsers (Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
+ - [x] Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware)) 
+***
+|  | Contributors:|  |
+|--|--|--|
+|  | 		2 ([diamondburned](https://github.com/diamondburned/) & [ThatGeekyWeeb](https://github.com/ThatGeekyWeeb))
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Status</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td>Edits:</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td><code>README</code> Only</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Fork</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td>Fork Only</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>(No PR)</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Testing</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td>-Client Only-</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>-  (No Tests have been done outside of the client)</td>
-<td></td>
-</tr>
-</tbody>
-</table><hr>
-<ul>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Client (BD(BetterBiscord)~(100% Working!)</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> Client (Other css injectors)</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled=""> Browsers (Chrome, etc. (Use <a href="https://github.com/openstyles/stylus">stylus</a> to inject css)</li>
-<li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" checked="true" disabled=""> Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware))</li>
-</ul>
-<hr>
+***
+## Dependencies
+  1. (All Blobmoji deps(https://github.com/C1710/blobmoji/wiki/Build-instructions))
+  2. `go`
+  3. `zopfli`
+  4. 1+ GiB of storage space
+ 
+## Building
 
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Contributors:</th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td>2 (<a href="https://github.com/diamondburned/">diamondburned</a> &amp; <a href="https://github.com/ThatGeekyWeeb">ThatGeekyWeeb</a>)</td>
-<td></td>
-</tr>
-</tbody>
-</table><hr>
-<h2 id="dependencies">Dependencies</h2>
-<ol>
-<li>(All Blobmoji deps(<a href="https://github.com/C1710/blobmoji/wiki/Build-instructions">https://github.com/C1710/blobmoji/wiki/Build-instructions</a>))</li>
-<li><code>go</code></li>
-<li><code>zopfli</code></li>
-<li>1+ GiB of storage space</li>
-</ol>
-<h2 id="building">Building</h2>
-<pre class=" language-sh"><code class="prism  language-sh">git submodule update --init
+```sh
+git submodule update --init
 cd blobmoji
 make -j$(nproc)
 cd ..
@@ -117,20 +49,27 @@ mv blobmoji/build/renamed_flags/* blobmoji/svg/
 mv blobmoji/build/resized_flags/ blobmoji/
 
 # This will generate the stylesheet.
-go run . -defpath definitions.css -datpath data.css &gt; &lt;css file&gt;
-</code></pre>
-<h2 id="releases">Releases</h2>
-<p>My github pages link can be used to <code>@import</code> the css</p>
-<pre class=" language-css"><code class="prism  language-css"><span class="token atrule"><span class="token rule">@import</span> <span class="token url">url("https://thatgeekyweeb.github.io/src/import.data.css")</span><span class="token punctuation">;</span></span>
-</code></pre>
-<p>Additionally there are releases <a href="https://github.com/ThatGeekyWeeb/disblob/releases">here!</a></p>
-<h1 id="contributing">Contributing</h1>
-<p>Any Pull Requests, Opened Issues, and forks are  Greatly welcomed!<br>
-You help make disblob better by Contributing!</p>
-<blockquote>
-<p>Written with <a href="https://stackedit.io/">StackEdit</a>.</p>
-</blockquote>
+go run . -defpath definitions.css -datpath data.css > <css file>
+```
+## Releases
+My github pages link can be used to `@import` the css
+```css
+@import url("https://thatgeekyweeb.github.io/src/import.data.css");
+```
+
+Additionally there are releases [here!](https://github.com/ThatGeekyWeeb/disblob/releases)
+
+
+# Contributing
+Any Pull Requests, Opened Issues, and forks are  Greatly welcomed!\
+You help make disblob better by Contributing!
+
+> Written with [StackEdit](https://stackedit.io/).
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExOTQ3NTAyODFdfQ==
+eyJoaXN0b3J5IjpbMTYyMDA3NjI2Nyw3Mjk5OTIyMjIsLTE0OT
+E2OTMyMzQsMTMzNjM1MTI5Nl19
+-->
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbLTcwODM1NzY2MywtMTE5NDc1MDI4MV19
 -->
