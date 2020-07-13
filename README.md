@@ -22,7 +22,7 @@ A stylesheet(css) generator for use with Discord.
 |  | 		-Client Only-		 |  |
 |  |-  (No Tests have been done outside of the client)  |  
 ***
- - [x] Client (BD(BetterBiscord))
+ - [x] Client (BD(BetterBiscord)~(100% Working!)
  - [ ] Client (Other css injectors)
  - [ ] Browsers (Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
  - [x] Firefox Browser (Testing done) 
@@ -67,5 +67,6 @@ You help make disblob better by Contributing!
 > Written with [StackEdit](https://stackedit.io/).
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0OTE2OTMyMzQsMTMzNjM1MTI5Nl19
+eyJoaXN0b3J5IjpbNzI5OTkyMjIyLC0xNDkxNjkzMjM0LDEzMz
+YzNTEyOTZdfQ==
 -->
