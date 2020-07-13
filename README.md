@@ -45,7 +45,7 @@ cd ./blobmoji
 make
 
 # This will generate the stylesheet.
-go run . -defpath definitions.css -datpath data.css
+go run . -defpath definitions.css -datpath data.css > <css file>
 ```
 
 # Contributing
