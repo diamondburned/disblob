@@ -22,9 +22,9 @@ A stylesheet(css) generator for use with Discord.
 |  | 		-Client Only-		 |  |
 |  |-  (No Tests have been done outside of the client)  |  
 ***
- - [x] Client (BD(BetterBiscord)
+ - [x] Client (BD(BetterBiscord))
  - [ ] Client (Other css injectors)
- - [ ] Browsers (FIrefox, Chrome, etc. (Use [Stylish](https://userstyles.org/) to inject css)
+ - [ ] Browsers (FIrefox, Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
 ***
 |  | Contributors:|  |
 |--|--|--|
@@ -41,8 +41,10 @@ A stylesheet(css) generator for use with Discord.
 
 ```sh
 git submodule update --init
-cd ./blobmoji
+cd blobmoji
 make
+mv blobmoji/build/renamed_flags/* blobmoji/svg/
+mv blobmoji/build/resized_flags/ blobmoji/
 
 # This will generate the stylesheet.
 go run . -defpath definitions.css -datpath data.css > <css file>
@@ -53,6 +55,3 @@ Any Pull Requests, Opened Issues, and forks are  Greatly welcomed!\
 You help make disblob better by Contributing!
 
 > Written with [StackEdit](https://stackedit.io/).
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE2Nzk0OTc4LDUzNDgyMDU2Ml19
--->
