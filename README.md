@@ -13,7 +13,7 @@ A stylesheet(css) generator for use with Discord.
 |  | 		All tested		 |  |
 |  |-  (Tests have been done with the client and Browsers)  |  
 ***
- - [x] Client (BD(BetterBiscord)~(100% Working!))
+ - [x] Client (BD(BetterBiscord)~(100% Working!)))
  - [x] Firefox Browser 
  - [x] Google Chrome
  > Use [stylus](https://github.com/openstyles/stylus) for injecting css Within browsers
