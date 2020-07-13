@@ -42,7 +42,7 @@ A stylesheet(css) generator for use with Discord.
 ```sh
 git submodule update --init
 cd blobmoji
-make
+make -j$(nproc)
 cd ..
 mv blobmoji/build/renamed_flags/* blobmoji/svg/
 mv blobmoji/build/resized_flags/ blobmoji/
