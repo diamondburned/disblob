@@ -7,14 +7,14 @@ A stylesheet(css) generator for use with Discord.
 ***This fork is an attempt to iron out some bugs, and refine the `README`***
 ***
 # Status
-|   Status |  |
+|   Status |
 |--|--|--|
-|  | Edits: |  | 
+|   Edits:
 |  | `README` Only |  |
 
 
 
-|   Fork|  |
+|   |Fork|  |
 |--|--|--|
 |  | Fork Only |  |
 |  |  (No PR)  |  |
@@ -56,5 +56,5 @@ You help make disblob better by Contributing!
 
 > Written with [StackEdit](https://stackedit.io/).
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTM0ODIwNTYyXX0=
+eyJoaXN0b3J5IjpbLTE1MjQyODI1OTYsNTM0ODIwNTYyXX0=
 -->
