@@ -15,7 +15,7 @@ A stylesheet(css) generator for use with Discord.
 |   |Fork|  |
 |--|--|--|
 |  | Fork Only |  |
-|  |  (No PR)  |  |
+|  |  (PR [Open](https://github.com/diamondburned/disblob/pull/1))  |  |
 
 |  | Testing |  |
 |--|--|--|
