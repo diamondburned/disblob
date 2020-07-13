@@ -1,6 +1,10 @@
 # disblob
+***All orginall code is done by the insane but genius diamondburned***
+***This fork is an attemp to iron our some bugs, and refine the README***
 
-A stylesheet generator for use with Discord.
+***Status: None (No chnages have been made yet)***
+
+A stylesheet(css) generator for use with Discord.
 
 ## Building
 
