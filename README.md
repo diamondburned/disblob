@@ -46,7 +46,7 @@ git clone https://github.com/diamondburned/disblob.git
 cd disblob
 git submodule update --init
 ```
-**Optinally, compile Blobmoji (Flags will not be mapped if you do not)**
+**Optionally, compile Blobmoji (Flags will not be mapped if you do not)**
 >(All Blobmoji [deps](https://github.com/C1710/blobmoji/wiki/Build-instructions) are required)
 > >```sh
 > >cd blobmoji
