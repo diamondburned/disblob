@@ -16,6 +16,15 @@ A stylesheet(css) generator for use with Discord.
  - [x] Client (BD(BetterBiscord)~(100% Working!))
  - [x] Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware)) 
  - [x] Google Chrome
+ > NOTE: use within browsers requires one use the `discord_imports.css` from [here](https://builds.sr.ht/~diamondburned/job/249530)(Latest build)
+ > Or use this
+ > ```css
+ > @import url("https://cdn.discordapp.com/attachments/729185721771884623/730214842333528134/style_part00.css");
+ > @import url("https://cdn.discordapp.com/attachments/729185721771884623/730214847161041026/style_part01.css");
+ > @import url("https://cdn.discordapp.com/attachments/729185721771884623/730214851900735570/style_part02.css");
+ > @import url("https://cdn.discordapp.com/attachments/729185721771884623/730214854991806464/style_part03.css");
+ > ```
+ > Importing with stylus requires one to upload the css to discord's servers, to bypass CORS
 ***
 ***
 |  | Contributors:|  |
