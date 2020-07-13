@@ -19,13 +19,14 @@ A stylesheet(css) generator for use with Discord.
 
 |  | Testing |  |
 |--|--|--|
-|  | 		-Client Only-		 |  |
-|  |-  (No Tests have been done outside of the client)  |  
+|  | 		-Client + Firefox-		 |  |
+|  |-  (Tests have been done with the client and Firefox)  |  
 ***
- - [x] Client (BD(BetterBiscord)~(100% Working!)
+ - [x] Client (BD(BetterBiscord)~(100% Working!))
  - [ ] Client (Other css injectors)
  - [ ] Browsers (Chrome, etc. (Use [stylus](https://github.com/openstyles/stylus) to inject css)
  - [x] Firefox Browser (Testing done with stylish(DO NOT USE(Considered spyware)) 
+***
 ***
 |  | Contributors:|  |
 |--|--|--|
@@ -41,6 +42,8 @@ A stylesheet(css) generator for use with Discord.
 ## Building
 
 ```sh
+git clone https://github.com/diamondburned/disblob.git
+cd disblob
 git submodule update --init
 cd blobmoji
 make -j$(nproc)
@@ -64,12 +67,4 @@ Additionally there are releases [here!](https://github.com/ThatGeekyWeeb/disblob
 Any Pull Requests, Opened Issues, and forks are  Greatly welcomed!\
 You help make disblob better by Contributing!
 
-> Written with [StackEdit](https://stackedit.io/).
-
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYyMDA3NjI2Nyw3Mjk5OTIyMjIsLTE0OT
-E2OTMyMzQsMTMzNjM1MTI5Nl19
--->
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbLTcwODM1NzY2MywtMTE5NDc1MDI4MV19
--->
+> Written with [StackEdit](https://stackedit.io/)
