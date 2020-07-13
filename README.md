@@ -7,6 +7,7 @@ A stylesheet(css) generator for use with Discord.
 ***This fork is an attempt to iron out some bugs, and refine the `README`***
 ***
 # Status
+![Go](https://github.com/ThatGeekyWeeb/disblob/workflows/Go/badge.svg?event=run)
 |   |Status |	|
 |--|--|--|
 |   |Edits: |	|
