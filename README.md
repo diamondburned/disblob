@@ -32,7 +32,7 @@ A stylesheet(css) generator for use with Discord.
 
 ***
 ## Dependencies
-  1. (All Blobmoji deps(https://github.com/C1710/blobmoji/blob/master/README.md#building-notocoloremoji))
+  1. (All Blobmoji deps(https://github.com/C1710/blobmoji/wiki/Build-instructions))
   2. `go`
   3. `zopfli`
   4. 1+ GiB of storage space
