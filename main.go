@@ -18,6 +18,9 @@ const f_CSS = "" +
 	`img[alt="%[2]s"],` + // used for unicodes
 	`li[aria-label^=":%[1]s:"]>div` + "{" +
 
+	// Write the Firefox CSS fix where both versions of an emoji would appear
+	// (gk).
+	"object-position:-9999px -9999px;" + // only for available emojis
 	"content:var(--a);" +
 	"background-image:var(--a)!important;" +
 	`--a:url("%[3]s")` +
@@ -25,13 +28,11 @@ const f_CSS = "" +
 	"}\n"
 
 func main() {
-	// Write the Firefox CSS fix where both versions of an emoji would appear
-	// (gk).
-	fmt.Println(`.emoji[src$=".svg"] { object-position: -9999px -9999px }`)
-
 	// Write the global list rule that fixes emoji scaling.
 	fmt.Println(`img[class^="emoji"], li[id^="emoji"] > div {
-		background-position: 0 !important; background-size: contain !important;
+		background-position: 0 !important;
+		background-size: contain !important;
+		background-repeat: no-repeat;
 	}`)
 
 	// Make a new processor and use it for root variables.
