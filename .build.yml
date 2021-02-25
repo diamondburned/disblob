@@ -20,7 +20,7 @@ tasks:
         # go to the repository
         cd disblob
         # build the CSS
-        go run . > style.css
+        go run . -v > style.css
 
         # split the CSS files
         split -C 7950k --numeric-suffixes --additional-suffix '.css' style.css style_part
