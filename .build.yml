@@ -2,7 +2,7 @@ secrets:
     - 1b222136-5875-4aac-ba84-b62ba1ab52c3
 sources:
     - https://github.com/diamondburned/disblob
-image: nixos/latest
+image: nixos/unstable # Go 1.16
 packages:
     - nixos.go
     - nixos.coreutils # used for split
