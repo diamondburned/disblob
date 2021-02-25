@@ -2,17 +2,20 @@ secrets:
     - 1b222136-5875-4aac-ba84-b62ba1ab52c3
 sources:
     - https://github.com/diamondburned/disblob
-image: alpine/edge
+image: nixos/latest
 packages:
-    - go
-    - coreutils # used for split
+    - nixos.go
+    - nixos.coreutils # used for split
+    - nixos.nodePackages.svgo
 artifacts:
     - disblob/style.css
     - disblob/discord_imports.css
+environment:
+    CGO_ENABLED: 0
 tasks:
     - test: |
         cd disblob
-        go test -v ./...
+        go test ./...
     - main: |
         # go to the repository
         cd disblob
@@ -20,7 +23,7 @@ tasks:
         go run . > style.css
 
         # split the CSS files
-        split -C 5m --numeric-suffixes --additional-suffix '.css' style.css style_part
+        split -C 7950k --numeric-suffixes --additional-suffix '.css' style.css style_part
 
         # publish the split CSS files into discord_imports.css
         go run ./cmd/webhooker ~/.webhook style_part*.css | while read u; do

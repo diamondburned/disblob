@@ -1,58 +1,52 @@
 package png
 
 import (
-	"bytes"
 	"encoding/base64"
 	"image/png"
+	"io"
 
 	"github.com/disintegration/imaging"
 	"github.com/pkg/errors"
 )
 
 // Size to reduce to.
-const Size = 48
+var Size = 64
 
 const inlinePrefix = "data:image/png;base64,"
 
 // encoder with padding, REQUIRED
 var b64encoder = base64.StdEncoding.WithPadding(base64.StdPadding)
 
-func Inline(pngdata []byte) ([]byte, error) {
-	// Compress first.
-	b, err := compress(pngdata)
+func Inline(w io.Writer, png io.Reader) error {
+	_, err := w.Write([]byte(inlinePrefix))
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to compress PNG")
+		return errors.Wrap(err, "failed to write inline prefix")
 	}
 
-	var b64len = base64.StdEncoding.EncodedLen(len(b))
-	var b64dat = make([]byte, len(inlinePrefix)+b64len)
+	enc := base64.NewEncoder(base64.StdEncoding, w)
 
-	// Write the header.
-	copy(b64dat, []byte(inlinePrefix))
+	if err := compress(png, enc); err != nil {
+		return err
+	}
 
-	// Base64 encode.
-	b64encoder.Encode(b64dat[len(inlinePrefix):], b)
-
-	return b64dat, nil
+	return enc.Close()
 }
 
 var pngencoder = png.Encoder{
 	CompressionLevel: png.BestCompression,
 }
 
-func compress(pngdata []byte) ([]byte, error) {
-	i, err := png.Decode(bytes.NewReader(pngdata))
+func compress(r io.Reader, w io.Writer) error {
+	i, err := png.Decode(r)
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to decode PNG")
+		return errors.Wrap(err, "failed to decode PNG")
 	}
 
-	i = imaging.Fit(i, Size, Size, imaging.Lanczos)
+	i = imaging.Fit(i, Size, Size, imaging.CatmullRom)
 
-	var buf bytes.Buffer
-
-	if err := pngencoder.Encode(&buf, i); err != nil {
-		return nil, errors.Wrap(err, "Failed to re-encode PNG")
+	if err := pngencoder.Encode(w, i); err != nil {
+		return errors.Wrap(err, "failed to re-encode PNG")
 	}
 
-	return buf.Bytes(), nil
+	return nil
 }

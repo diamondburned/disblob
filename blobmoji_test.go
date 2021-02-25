@@ -19,8 +19,13 @@ func TestBlobPrefixName(t *testing.T) {
 }
 
 func TestDiscordEmojisExist(t *testing.T) {
+	formats := []emojiFormat{
+		svgFormat,
+		pngFormat,
+	}
+
 	for name, emoji := range discordemojimap.EmojiMap {
-		p, err := BlobExists(emoji)
+		p, err := BlobExists(emoji, formats)
 		if err != nil {
 			t.Logf("Emoji %q does not exist at %q, error %v.", name, p, err)
 		}

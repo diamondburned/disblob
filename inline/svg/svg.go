@@ -2,68 +2,87 @@ package svg
 
 import (
 	"bytes"
+	"encoding/base64"
+	"io"
 	"net/url"
 	"regexp"
 
+	"github.com/diamondburned/disblob/inline"
 	"github.com/pkg/errors"
-	"github.com/tdewolff/minify"
-	"github.com/tdewolff/minify/css"
-	"github.com/tdewolff/minify/svg"
 )
 
 const inlinePrefix = "data:image/svg+xml,"
 
-var minifier *minify.M
+// PreferBase64 prefers base64 over URL encoding.
+var PreferBase64 = true
 
-func init() {
-	minifier = minify.New()
-	minifier.AddFunc("image/svg+xml", svg.Minify)
-	minifier.AddFunc("text/css", css.Minify)
-}
+// ForceSansSerif forces the font to be sans-serif instead of Comic Neue.
+var ForceSansSerif = true
 
-// Inline transforms an SVG into its inline data equivalent.
-func Inline(svg []byte) ([]byte, error) {
-	// Minify before validating and inlining. Allocate a stage 1 buffer.
-	stage1 := bytes.Buffer{}
-	stage1.Grow(len(svg))
-
-	if err := minifier.Minify("image/svg+xml", &stage1, bytes.NewReader(svg)); err != nil {
-		return nil, errors.Wrap(err, "Failed to minify")
-	}
-
-	// This breaks some SVGs, so we're not doing it.
-
-	// // Allocate a stage 2 buffer to write the prefix as well as minify the SVG
-	// // tag's attribute.
-	// stage2 := bytes.Buffer{}
-	// stage2.Grow(stage1.Len())
-
-	// if err := minifyOpeningTag(&stage2, &stage1); err != nil {
-	// 	return nil, errors.Wrap(err, "Failed to minify the SVG attribute tag")
-	// }
-
-	// Finally, URL escape everything.
-	stage3 := bytes.Buffer{}
-	stage3.WriteString(inlinePrefix)
-	stage3.Write(escape(stage1.Bytes()))
-
-	return stage3.Bytes(), nil
-}
+// regex to fix ugly font
+var comicNeueRegex = regexp.MustCompile(`(?mUi)(['"])Comic Neue( \w+)?['"]`)
 
 var (
-	// regex to escape symbols
-	symbolRegex = regexp.MustCompile(`(?m)[\r\n#?\[\\\]^\x60{|}'"]`)
-	// regex to strip invalid style attributes
-	invstyleRegex = regexp.MustCompile(`(?mU) style=".*'.*'.*"`)
-	// regex to fix ugly font
-	comicNeueRegex = regexp.MustCompile(`(?mUi)(['"])Comic Neue( \w+)?['"]`)
-
-	sansserif = []byte("${1}sans-serif${1}")
+	urlEncodePrefix = "data:image/svg+xml,"
+	b64EncodePrefix = "data:image/svg+xml;base64,"
 )
 
-func escape(src []byte) []byte {
-	// replace all Comit Neues w/ normal Sans
-	src = comicNeueRegex.ReplaceAll(src, sansserif)
+// Inline transforms an SVG into its inline data equivalent.
+func Inline(w io.Writer, svg io.Reader) (err error) {
+	if PreferBase64 {
+		_, err = w.Write([]byte(b64EncodePrefix))
+	} else {
+		_, err = w.Write([]byte(urlEncodePrefix))
+	}
 
-	return []byte(url.PathEscape(string(src)))
+	if err != nil {
+		return errors.Wrap(err, "failed to write prefix")
+	}
+
+	if !ForceSansSerif {
+		return doInline(svg, w)
+	}
+
+	// If we want to use a sans-serif font, then we must allocate a buffer.
+	buf := bytes.Buffer{}
+	buf.Grow(4096)
+
+	if err := doInline(svg, &buf); err != nil {
+		return err
+	}
+
+	b := comicNeueRegex.ReplaceAll(buf.Bytes(), []byte("${1}sans-serif${1}"))
+
+	_, err = w.Write(b)
+	return err
+}
+
+func doInline(svg io.Reader, w io.Writer) (err error) {
+	// Either encode in Base64 or URL.
+	if PreferBase64 {
+		enc := base64.NewEncoder(base64.StdEncoding, w)
+		defer enc.Close()
+
+		w = enc
+
+	} else {
+		w = urlEncoder{w}
+	}
+
+	if err := inline.Minifier.Minify("image/svg+xml", w, svg); err != nil {
+		return errors.Wrap(err, "failed to minify")
+	}
+
+	return nil
+}
+
+type urlEncoder struct{ w io.Writer }
+
+func (enc urlEncoder) Write(b []byte) (int, error) {
+	_, err := enc.w.Write([]byte(url.QueryEscape(string(b))))
+	if err != nil {
+		return 0, err
+	}
+
+	return len(b), nil
 }

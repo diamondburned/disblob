@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,7 +35,7 @@ func JoinUnicodeStringify(ustr, sep string) string {
 	}
 
 	// Trim trailing separators.
-	return strings.TrimRight(builder.String(), sep)
+	return strings.TrimSuffix(builder.String(), sep)
 }
 
 var BlobmojiPath = filepath.Join(".", "blobmoji")
@@ -43,40 +44,37 @@ func blobPrefixName(emoji string) string {
 	return "emoji_u" + JoinUnicodeStringify(emoji, "_")
 }
 
-// Prioritize PNG over SVG.
-var tryformats = []struct{ path, format string }{
-	{filepath.Join("png", "128"), ".png"},
-	{"svg", ".svg"},
+func blobPopLastRune(emoji string) (string, bool) {
+	parts := strings.Split(emoji, "_")
+	if len(parts) < 3 { // never trim the base rune
+		return "", false
+	}
+
+	return strings.Join(parts[:len(parts)-1], "_"), true
 }
 
 // knownFiles maps an emoji prefix to the file.
-var knownFiles = map[string]string{}
-var knownNames = []string{}
-var knownOnce = sync.Once{}
+var (
+	knownFiles = map[string]string{}
+	knownNames []string
+	knownOnce  sync.Once
+	knownErr   error
+)
 
-func ensureKnownFiles() (toperr error) {
+func ensureKnownFiles(formats []emojiFormat) error {
 	knownOnce.Do(func() {
-		for _, formats := range tryformats {
-			var dirname = filepath.Join(BlobmojiPath, formats.path)
+		dirFS := os.DirFS(BlobmojiPath)
 
-			d, err := os.Open(dirname)
+		for _, format := range formats {
+			d, err := fs.ReadDir(dirFS, format.Path)
 			if err != nil {
-				toperr = errors.Wrap(err, "Failed to open formats dir")
+				knownErr = errors.Wrap(err, "failed to open formats dir")
 				return
 			}
 
-			f, err := d.Readdir(-1)
-			if err != nil {
-				toperr = errors.Wrap(err, "Failed to read dir")
-				return
-			}
-
-			// Close the directory; we don't need to check error here.
-			d.Close()
-
-			for _, file := range f {
+			for _, file := range d {
 				// Strip the format.
-				name := strings.Split(file.Name(), ".")[0]
+				name := strings.TrimSuffix(file.Name(), format.Ext)
 
 				// Skip if we already have this emoji.
 				if _, ok := knownFiles[name]; ok {
@@ -84,33 +82,42 @@ func ensureKnownFiles() (toperr error) {
 				}
 
 				// Assign to map and slice.
-				knownFiles[name] = filepath.Join(dirname, file.Name())
+				knownFiles[name] = filepath.Join(BlobmojiPath, format.Path, file.Name())
 				knownNames = append(knownNames, name)
 			}
 		}
 	})
-	return
+
+	return knownErr
 }
 
-type Blob struct {
-	Path string // path to the blog
-	SVG  bool
-}
-
-var stopWalk = errors.New("stop walk")
 var ErrNotFound = errors.New("emoji not found")
 
 // BlobExists returns the filename and true if the given emoji exists in
 // Blobmoji. It returns the attempted filename in Path and false otherwise.
-func BlobExists(emoji string) (string, error) {
-	if err := ensureKnownFiles(); err != nil {
+func BlobExists(emoji string, formats []emojiFormat) (string, error) {
+	if err := ensureKnownFiles(formats); err != nil {
 		return "", err
 	}
 
-	var prefix = blobPrefixName(emoji)
+	prefix := blobPrefixName(emoji)
 
-	if path, ok := knownFiles[prefix]; ok {
+	path, ok := knownFiles[prefix]
+	if ok {
 		return path, nil
+	}
+
+	var shorten = prefix
+	for {
+		shorten, ok = blobPopLastRune(shorten)
+		if !ok {
+			break
+		}
+
+		path, ok := knownFiles[shorten]
+		if ok {
+			return path, nil
+		}
 	}
 
 	// Try the slow path. Search the prefix and grab the first match.
@@ -120,5 +127,5 @@ func BlobExists(emoji string) (string, error) {
 		}
 	}
 
-	return prefix, ErrNotFound
+	return prefix, errors.Wrapf(ErrNotFound, "error with %q", prefix)
 }
