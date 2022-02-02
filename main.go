@@ -29,8 +29,8 @@ var jobs = runtime.GOMAXPROCS(-1) * 2
 //    `li[aria-label^=":%[1]s:"]>div` + "{"
 
 const f_CSS = "" +
-	`img[alt=":%[1]s:"], ` + // used for emoji names
-	`img[alt="%[2]s"] ` + // used for unicodes
+	`img[src^="/assets"][data-name=":%[1]s:"], ` + // used for emoji names
+	`img[src^="/assets"][alt="%[2]s"] ` + // used for unicodes
 
 	"{ " +
 
@@ -78,15 +78,18 @@ func main() {
 	bufOut := bufio.NewWriterSize(os.Stdout, 40960) // 40KB
 	w := inline.WritePipeline(bufOut, css.Inline)
 
-	fmt.Fprintln(w, `span[class^="emojiContainer"] img.emoji {
-		/* value for object-position */
-		--op: -9999px -9999px;
+	fmt.Fprintln(w, `
+		div[class^="reactionInner"] img.emoji,
+		span[class^="emojiContainer"] img.emoji {
+			/* value for object-position */
+			--op: -9999px -9999px;
 
-		/* background fix */
-		background-position: 0 !important;
-		background-size: contain !important;
-		background-repeat: no-repeat;
-	}`)
+			/* background fix */
+			background-position: 0 !important;
+			background-size: contain !important;
+			background-repeat: no-repeat;
+		}
+	`)
 
 	type emojiFile struct {
 		Name  string
