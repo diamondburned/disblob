@@ -29,8 +29,8 @@ var jobs = runtime.GOMAXPROCS(-1) * 2
 //    `li[aria-label^=":%[1]s:"]>div` + "{"
 
 const f_CSS = "" +
-	`img[src^="/assets"][data-name=":%[1]s:"], ` + // used for emoji names
-	`img[src^="/assets"][alt="%[2]s"] ` + // used for unicodes
+	`img[src^="/assets"][alt=":%[1]s:"], ` + // used for emoji names
+	`img[alt="%[2]s"] ` + // used for unicodes
 
 	"{ " +
 
@@ -80,6 +80,7 @@ func main() {
 
 	fmt.Fprintln(w, `
 		div[class^="reactionInner"] img.emoji,
+		div[class*="emojiSection-"] img.emoji,
 		span[class^="emojiContainer"] img.emoji {
 			/* value for object-position */
 			--op: -9999px -9999px;
